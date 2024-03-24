@@ -54,11 +54,10 @@
 # # It displays a chat interface where users can converse with the Gemini-Pro assistant.
 # # User messages are sent to the AI model, and responses are displayed back to the user.
 # # The chat history is maintained and displayed in the app interface.
-
 import streamlit as st
-from dotenv import load_dotenv
+# from dotenv import load_dotenv  # Uncomment if dotenv is used for other purposes
 import google.generativeai as gen_ai
-from google.generativeai.types.generation_types import BlockedPromptException
+from google.generativeai.types.generation_types import BlockedPromptException, StopCandidateException
 
 # Configure Streamlit page settings
 st.set_page_config(page_title="Chat with Gemini-Pro!", page_icon=":brain:", layout="centered")
@@ -92,18 +91,17 @@ for message in st.session_state.chat_session.history:
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
 if user_prompt:
-    # Add user's message to chat and display it
-    st.chat_message("user").markdown(user_prompt)
-    
     try:
+        # Add user's message to chat and display it
+        st.chat_message("user").markdown(user_prompt)
+
         # Attempt to send user's message to Gemini-Pro and get the response
         gemini_response = st.session_state.chat_session.send_message(user_prompt)
-        
+
         # Display Gemini-Pro's response
         with st.chat_message("assistant"):
             st.markdown(gemini_response.text)
-    except BlockedPromptException as e:
-        # Handle blocked prompt exception by asking the user to try a different query
-        with st.chat_message("assistant"):
-            st.error("Your query was blocked by the model. Please try a different query.")
-
+    except Exception as e:
+        # Handle any exception by logging and asking the user to try again
+        st.exception("An error occurred: {}".format(e))
+        st.warning("Please try asking your question again.")
