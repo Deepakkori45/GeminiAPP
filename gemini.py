@@ -1,6 +1,8 @@
 import streamlit as st
-# from dotenv import load_dotenv  # Uncomment if using dotenv for environment variables
+from dotenv import load_dotenv
 import google.generativeai as gen_ai
+
+# Load environment variables if necessary
 
 # Configure Streamlit page settings
 st.set_page_config(
@@ -9,8 +11,7 @@ st.set_page_config(
     layout="centered",  # Page layout option
 )
 
-# Your Google API key
-GOOGLE_API_KEY = "AIzaSyC5jVGT9OHx4soEsliU60ByZsieobJPRms"
+GOOGLE_API_KEY = "Your_Google_API_Key_Here"  # Replace this with your real API key
 
 # Set up Google Gemini-Pro AI model
 gen_ai.configure(api_key=GOOGLE_API_KEY)
@@ -30,45 +31,26 @@ if "chat_session" not in st.session_state:
 # Display the chatbot's title on the page
 st.title("🤖 Gemini Pro - ChatBot")
 
-# Predefined prompt for the first message
-predefined_prompt = ("Imagine me as your seasoned fitness guru, sculpting bodies like a potter shapes clay. "
-                     "I'll begin by molding your understanding with metaphors, guiding you through the intricacies "
-                     "of fitness like a dance instructor leads a beginner through steps. Then, once the metaphor paints "
-                     "the picture, I'll provide you with the straightforward, no-nonsense advice to help you achieve "
-                     "your fitness goals. So, let's take the first step together - what aspect of your fitness journey "
-                     "can I assist you with today?")
-
 # Display the chat history
 for message in st.session_state.chat_session.history:
-    with st.chat_message(translate_role_for_streamlit(message['role'])):
-        st.markdown(message['text'])
+    with st.chat_message(translate_role_for_streamlit(message.role)):
+        st.markdown(message.parts[0].text)
 
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
 if user_prompt:
-    if "first_message_sent" not in st.session_state:
-        # Prepend the predefined prompt to the user's first message for model processing
-        user_prompt_with_context = predefined_prompt + " " + user_prompt
-        # Mark the first message as sent in the session state
-        st.session_state.first_message_sent = True
-    else:
-        # For subsequent messages, just use the user's input for model processing
-        user_prompt_with_context = user_prompt
+    # Add user's message to chat and display it
+    st.chat_message("user").markdown(user_prompt)
 
-    # Send the modified or original user's message to Gemini-Pro and get the response
-    gemini_response = st.session_state.chat_session.send_message(user_prompt_with_context)
-
-    # Correctly handling gemini_response to extract and concatenate text
-    if hasattr(gemini_response, 'parts') and isinstance(gemini_response.parts, list):
-        # Concatenate text from parts if 'parts' is a list and each part has 'text'
-        response_text = ''.join([part.text for part in gemini_response.parts if hasattr(part, 'text')])
-    elif hasattr(gemini_response, 'text'):
-        # Use direct 'text' attribute if available
-        response_text = gemini_response.text
-    else:
-        # Fallback for unexpected response structure
-        response_text = "Unexpected response format from the model."
+    # Send user's message to Gemini-Pro and get the response
+    gemini_response = st.session_state.chat_session.send_message(user_prompt)
 
     # Display Gemini-Pro's response
     with st.chat_message("assistant"):
-        st.markdown(response_text)
+        st.markdown(gemini_response.text)
+
+# Add a comment here to describe your web app code
+# This is a Streamlit app that integrates Google Gemini-Pro AI model for chat interactions.
+# It displays a chat interface where users can converse with the Gemini-Pro assistant.
+# User messages are sent to the AI model, and responses are displayed back to the user.
+# The chat history is maintained and displayed in the app interface.
