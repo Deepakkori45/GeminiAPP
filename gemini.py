@@ -31,41 +31,32 @@ if "chat_session" not in st.session_state:
 st.title("🤖 Gemini Pro - ChatBot")
 
 # Predefined prompt for the first message
-predefined_prompt = "Imagine me as your seasoned fitness guru... [remainder of the prompt]"
+predefined_prompt = "Imagine me as your seasoned fitness guru, sculpting bodies like a potter shapes clay. I'll begin by molding your understanding with metaphors, guiding you through the intricacies of fitness like a dance instructor leads a beginner through steps. Then, once the metaphor paints the picture, I'll provide you with the straightforward, no-nonsense advice to help you achieve your fitness goals. So, let's take the first step together - what aspect of your fitness journey can I assist you with today?"
 
 # Display the chat history
 for message in st.session_state.chat_session.history:
-    # Ensure only the original user message or model responses are displayed
-    with st.chat_message(translate_role_for_streamlit(message['role'])):
-        st.markdown(message['text'])
+    with st.chat_message(translate_role_for_streamlit(message.role)):
+        st.markdown(message.parts[0].text)
 
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
 if user_prompt:
-    # Always add the user's original message to chat and display it
-    # This is where you append the user message to the history
-    st.session_state.chat_session.history.append({"role": "user", "text": user_prompt})
-
-    # Determine if it's the first user message for the session
-    first_user_message = len([m for m in st.session_state.chat_session.history if m['role'] == 'user']) == 1
-
-    if first_user_message:
-        # For the first message, prepend the predefined prompt for processing
+    # Check if it's the first user's message in the session
+    if "first_message_sent" not in st.session_state:
+        # Prepend the predefined prompt to the user's first message for model processing
         user_prompt_with_context = predefined_prompt + user_prompt
+        # Mark the first message as sent in the session state
+        st.session_state.first_message_sent = True
     else:
-        # For subsequent messages, just use the user's input
+        # For subsequent messages, just use the user's input for model processing
         user_prompt_with_context = user_prompt
 
-    # Send the user's message (or the modified first message) to the model
-    # Assuming a function `send_to_model` sends the message to your model and returns the response
-    # gemini_response = send_to_model(user_prompt_with_context)
+    # Always add user's original message to chat and display it
+    st.chat_message("user").markdown(user_prompt)
 
-    # Simulate receiving a response from the model
-    gemini_response_text = "Simulated response based on: " + user_prompt_with_context
+    # Send the modified or original user's message to Gemini-Pro and get the response
+    gemini_response = st.session_state.chat_session.send_message(user_prompt_with_context)
 
-    # Add the model's response to the chat history
-    st.session_state.chat_session.history.append({"role": "model", "text": gemini_response_text})
-
-    # Optionally display the model's response immediately
+    # Display Gemini-Pro's response
     with st.chat_message("assistant"):
-        st.markdown(gemini_response_text)
+        st.markdown(gemini_response.text)
