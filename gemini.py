@@ -50,7 +50,7 @@ if user_prompt:
     st.chat_message("user").markdown(user_prompt)
 
     # Send the modified or original user's message to Gemini-Pro and get the response
-    gemini_response = st.session_state.chat_session.send_message(user_prompt_with_context)
+    gemini_response = st.session_state.chat_session.send_message(user_prompt)
 
     # Display Gemini-Pro's response
     with st.chat_message("assistant"):
