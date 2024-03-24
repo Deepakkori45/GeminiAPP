@@ -57,6 +57,13 @@ if user_prompt:
     # Send the modified or original user's message to Gemini-Pro and get the response
     gemini_response = st.session_state.chat_session.send_message(user_prompt_with_context)
 
+    # Assuming gemini_response.parts is a list of Part objects, and we want to concatenate their texts
+    if hasattr(gemini_response, 'parts') and isinstance(gemini_response.parts, list):
+        response_text = ''.join([part.text for part in gemini_response.parts if hasattr(part, 'text')])
+    else:
+        # Fallback or error handling if the response does not match the expected structure
+        response_text = "Received an unexpected response format from the model."
+
     # Display Gemini-Pro's response
     with st.chat_message("assistant"):
-        st.markdown(gemini_response.text)
+        st.markdown(response_text)
