@@ -103,5 +103,5 @@ if user_prompt:
             st.markdown(gemini_response.text)
     except Exception as e:
         # Handle any exception by logging and asking the user to try again
-        st.exception("An error occurred: {}".format(e))
+        # st.exception("An error occurred: {}".format(e))
         st.warning("Please try asking your question again.")
