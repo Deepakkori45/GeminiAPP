@@ -1,6 +1,3 @@
-# python-dotenv==1.0.1
-# google-generativeai==0.3.2
-# streamlit==1.30.0
 import streamlit as st
 import google.generativeai as gen_ai
 from google.generativeai.types.generation_types import BlockedPromptException, StopCandidateException
