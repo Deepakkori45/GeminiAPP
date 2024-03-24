@@ -38,19 +38,24 @@ for message in st.session_state.chat_session.history:
     with st.chat_message(translate_role_for_streamlit(message.role)):
         st.markdown(message.parts[0].text)
 
-# user_prompt_with_context = predefined_prompt + "respond to this as how can i assist you today?"
-# gemini_response = st.session_state.chat_session.send_message(user_prompt_with_context)
-
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
 if user_prompt:
-    # For subsequent messages, just use the user's input for model processing
-    # user_prompt_with_context = user_prompt
+    # Check if it's the first user's message in the session
+    if "first_message_sent" not in st.session_state:
+        # Prepend the predefined prompt to the user's first message for model processing
+        user_prompt_with_context = predefined_prompt + user_prompt
+        # Mark the first message as sent in the session state
+        st.session_state.first_message_sent = True
+    else:
+        # For subsequent messages, just use the user's input for model processing
+        user_prompt_with_context = user_prompt
+
     # Always add user's original message to chat and display it
     st.chat_message("user").markdown(user_prompt)
 
     # Send the modified or original user's message to Gemini-Pro and get the response
-    gemini_response = st.session_state.chat_session.send_message(user_prompt)
+    gemini_response = st.session_state.chat_session.send_message(user_prompt_with_context)
 
     # Display Gemini-Pro's response
     with st.chat_message("assistant"):
