@@ -1,5 +1,5 @@
 import streamlit as st
-# from dotenv import load_dotenv  # Uncomment if dotenv is used for other purposes
+# from dotenv import load_dotenv  # Uncomment if using dotenv for environment variables
 import google.generativeai as gen_ai
 
 # Configure Streamlit page settings
@@ -31,30 +31,42 @@ if "chat_session" not in st.session_state:
 st.title("🤖 Gemini Pro - ChatBot")
 
 # Predefined prompt for the first message
-predefined_prompt = "Imagine me as your seasoned fitness guru, sculpting bodies like a potter shapes clay..."
+predefined_prompt = ("Imagine me as your seasoned fitness guru, sculpting bodies like a potter shapes clay. "
+                     "I'll begin by molding your understanding with metaphors, guiding you through the intricacies "
+                     "of fitness like a dance instructor leads a beginner through steps. Then, once the metaphor paints "
+                     "the picture, I'll provide you with the straightforward, no-nonsense advice to help you achieve "
+                     "your fitness goals. So, let's take the first step together - what aspect of your fitness journey "
+                     "can I assist you with today?")
 
 # Display the chat history
 for message in st.session_state.chat_session.history:
-    with st.chat_message(translate_role_for_streamlit(message['role'])):  # Adjusted to use dictionary key access
-        st.markdown(message['text'])  # Adjusted to use dictionary key access
+    with st.chat_message(translate_role_for_streamlit(message['role'])):
+        st.markdown(message['text'])
 
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
 if user_prompt:
     if "first_message_sent" not in st.session_state:
         # Prepend the predefined prompt to the user's first message for model processing
-        user_prompt_with_context = predefined_prompt + user_prompt
-        st.session_state.first_message_sent = True  # Mark the first message as sent
+        user_prompt_with_context = predefined_prompt + " " + user_prompt
+        # Mark the first message as sent in the session state
+        st.session_state.first_message_sent = True
     else:
-        user_prompt_with_context = user_prompt  # For subsequent messages
+        # For subsequent messages, just use the user's input for model processing
+        user_prompt_with_context = user_prompt
 
     # Send the modified or original user's message to Gemini-Pro and get the response
     gemini_response = st.session_state.chat_session.send_message(user_prompt_with_context)
 
-    # Handling response assuming 'gemini_response' contains directly accessible text
-    if hasattr(gemini_response, 'text'):  # Directly using the 'text' attribute
+    # Correctly handling gemini_response to extract and concatenate text
+    if hasattr(gemini_response, 'parts') and isinstance(gemini_response.parts, list):
+        # Concatenate text from parts if 'parts' is a list and each part has 'text'
+        response_text = ''.join([part.text for part in gemini_response.parts if hasattr(part, 'text')])
+    elif hasattr(gemini_response, 'text'):
+        # Use direct 'text' attribute if available
         response_text = gemini_response.text
     else:
+        # Fallback for unexpected response structure
         response_text = "Unexpected response format from the model."
 
     # Display Gemini-Pro's response
