@@ -38,6 +38,10 @@ for message in st.session_state.chat_session.history:
     with st.chat_message(translate_role_for_streamlit(message.role)):
         st.markdown(message.parts[0].text)
 
+user_prompt_with_context = predefined_prompt + "respond to this as how can i assist you today?"
+st.chat_message("user").markdown(user_prompt)
+gemini_response = st.session_state.chat_session.send_message(user_prompt_with_context)
+
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
 if user_prompt:
