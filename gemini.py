@@ -33,14 +33,18 @@ st.title("🤖 Gemini Pro - ChatBot")
 # Predefined prompt for the first message
 predefined_prompt = "Imagine me as your seasoned fitness guru, sculpting bodies like a potter shapes clay. I'll begin by molding your understanding with metaphors, guiding you through the intricacies of fitness like a dance instructor leads a beginner through steps. Then, once the metaphor paints the picture, I'll provide you with the straightforward, no-nonsense advice to help you achieve your fitness goals. So, let's take the first step together - what aspect of your fitness journey can I assist you with today?"
 
-# Input field for user's message with default value
-user_prompt = st.text_input("Ask Gemini-Pro...", value="Your first message goes here")
+# Display the chat history
+for message in st.session_state.chat_session.history:
+    with st.chat_message(translate_role_for_streamlit(message.role)):
+        st.markdown(message.parts[0].text)
 
+# Input field for user's message
+user_prompt = st.chat_input("Ask Gemini-Pro...")
 if user_prompt:
     # Check if it's the first user's message in the session
     if "first_message_sent" not in st.session_state:
         # Prepend the predefined prompt to the user's first message for model processing
-        user_prompt_with_context = predefined_prompt + user_prompt
+        user_prompt_with_context = predefined_prompt + "respond to this as how can i assist you today?" 
         # Mark the first message as sent in the session state
         st.session_state.first_message_sent = True
     else:
