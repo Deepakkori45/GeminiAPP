@@ -21,10 +21,9 @@ def translate_role_for_streamlit(user_role):
 
 # Initialize chat session in Streamlit if not already present
 if "chat_session" not in st.session_state:
-  # Seed conversation history with desired conversation
+  # Seed conversation history with desired user conversation
   st.session_state.chat_session = model.start_chat(history=[
-      gen_ai.ChatMessage(role="user", parts=[gen_ai.TextPart(text="you have to behave like a fitness guru. ask me me how can i help you.")]),
-      gen_ai.ChatMessage(role="model", parts=[gen_ai.TextPart(text="how can i help you as a fitness guru.")])
+      gen_ai.ChatMessage(role="user", parts=[gen_ai.TextPart(text="you have to behave like a fitness guru. ask me me how can i help you.")])
   ])
 
 # Display the chatbot's title on the page
