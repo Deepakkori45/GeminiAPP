@@ -27,7 +27,7 @@ if "chat_session" not in st.session_state:
   # Seed conversation history with hidden message (optional)
   initial_prompt = "Hi there! I'm Gemini-Pro, your friendly fitness guru. How can I help you today?"
   st.session_state.chat_session = model.start_chat(history=[
-      gen_ai.ChatMessage(role="user", parts=[gen_ai.TextPart(text=initial_prompt)])
+      gen_ai.send_message(role="user", parts=[gen_ai.TextPart(text=initial_prompt)])
   ])
 
   # Generate response to initial prompt (hidden from user)
