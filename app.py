@@ -52,7 +52,7 @@ Start with asking how can i help you:"""
 count = 0
 for message in st.session_state.chat_session.history:
     if count == 0:
-        st.markdown("nice")
+        st.markdown(user_prompt)
         count+=1
     else:
         with st.chat_message(translate_role_for_streamlit(message.role)):
