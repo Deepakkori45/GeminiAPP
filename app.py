@@ -49,6 +49,18 @@ This investigative procedure will serve as a foundational tool, generating a nua
 Start with asking how can i help you:"""
 
 # Display the chat history
+# count = 0
+# for message in st.session_state.chat_session.history:
+#     if count == 0:
+#         st.markdown(user_prompt)
+#         count+=1
+#     else:
+#         with st.chat_message(translate_role_for_streamlit(message.role)):
+#             st.markdown(message.parts[0].text)
+
+# Input field for user's message
+user_prompt = st.chat_input("Ask Gemini-Pro...")
+# Display the chat history
 count = 0
 for message in st.session_state.chat_session.history:
     if count == 0:
@@ -58,8 +70,6 @@ for message in st.session_state.chat_session.history:
         with st.chat_message(translate_role_for_streamlit(message.role)):
             st.markdown(message.parts[0].text)
 
-# Input field for user's message
-user_prompt = st.chat_input("Ask Gemini-Pro...")
 if user_prompt:
     # Check if it's the first user's message in the session
     if "first_message_sent" not in st.session_state:
