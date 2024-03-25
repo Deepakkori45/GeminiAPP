@@ -49,7 +49,7 @@ This investigative procedure will serve as a foundational tool, generating a nua
 Start with asking how can i help you:"""
 
 # Display the chat history
-for message in st.session_state.chat_session.history:
+for message in st.session_state.chat_session.history[1:]:
     with st.chat_message(translate_role_for_streamlit(message.role)):
         st.markdown(message.parts[0].text)
 
