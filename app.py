@@ -75,5 +75,5 @@ if user_prompt:
     with st.chat_message("user"):
         st.markdown(user_prompt)
     # Display Gemini-Pro's response
-    with st.chat_message("assistant"):
-        st.markdown(gemini_response.text)
+    # with st.chat_message("assistant"):
+    #     st.markdown(gemini_response.text)
