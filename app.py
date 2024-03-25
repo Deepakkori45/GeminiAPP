@@ -34,8 +34,13 @@ with st.expander("Chat History"):
       # Only display the message text, not model parts
       st.markdown(message.text) 
 
+extra = "You are fitness guru. behave like that."
+gemini_response = st.session_state.chat_session.send_message(extra)
+st.chat_message("user").markdown(gemini_response)
+
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
+
 if user_prompt:
   try:
     # Add user's message to chat and display it
