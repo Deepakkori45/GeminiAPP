@@ -49,9 +49,14 @@ This investigative procedure will serve as a foundational tool, generating a nua
 Start with asking how can i help you:"""
 
 # Display the chat history
+count = 0
 for message in st.session_state.chat_session.history:
-    with st.chat_message(translate_role_for_streamlit(message.role)):
-        st.markdown(message.parts[0].text)
+    if count == 0:
+        st.markdown("nice")
+        count+=1
+    else:
+        with st.chat_message(translate_role_for_streamlit(message.role)):
+            st.markdown(message.parts[0].text)
 
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
@@ -73,5 +78,5 @@ if user_prompt:
     gemini_response = st.session_state.chat_session.send_message(user_prompt_with_context)
     
     # Display Gemini-Pro's response
-    # with st.chat_message("assistant"):
-    #     st.markdown(gemini_response.text)
+    with st.chat_message("assistant"):
+        st.markdown(gemini_response.text)
