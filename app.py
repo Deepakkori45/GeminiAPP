@@ -53,8 +53,8 @@ count = 0
 for message in st.session_state.chat_session.history:
     if count == 0:
         message_text = message.parts[0].text
-        words = message_text.split()
-        st.markdown(words[:-1])
+        words = message_text..splitlines()
+        st.markdown(words)
         count+=1
     else:
         with st.chat_message(translate_role_for_streamlit(message.role)):
