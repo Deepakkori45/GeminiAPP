@@ -14,31 +14,36 @@ model = gen_ai.GenerativeModel('gemini-pro')
 
 # Function to translate roles between Gemini-Pro and Streamlit terminology
 def translate_role_for_streamlit(user_role):
-    if user_role == "model":
-        return "assistant"
-    else:
-        return user_role
+  if user_role == "model":
+    return "assistant"
+  else:
+    return user_role
 
 # Initialize chat session in Streamlit if not already present
 if "chat_session" not in st.session_state:
-    st.session_state.chat_session = model.start_chat(history=[])
+  # Seed conversation history with the prompt as a hidden message
+  prompt = "you are fitness guru. ask user how can I help you"
+  st.session_state.chat_session = model.start_chat(history=[
+      gen_ai.ChatMessage(role="user", parts=[gen_ai.TextPart(text=prompt)])
+  ])
+
+  # Generate response to initial prompt (hidden from user)
+  response = st.session_state.chat_session.send_message(prompt)
 
 # Display the chatbot's title on the page
-st.title("🤖 Gemini Pro - ChatBot")
+st.title(" Gemini Pro - ChatBot")
 
 # Display the chat history
 for message in st.session_state.chat_session.history:
-    with st.chat_message(translate_role_for_streamlit(message.role)):
-        st.markdown(message.parts[0].text)
+  with st.chat_message(translate_role_for_streamlit(message.role)):
+    st.markdown(message.parts[0].text)  # Only display message text
 
+# User input field
 user_prompt = st.chat_input("Ask Gemini-Pro...")
 
-# starting convoration manually
-prompt= "you are fitness guru. ask user how can i help you"
-st.chat_message("user").markdown(prompt)
-gemini_response = st.session_state.chat_session.send_message(prompt)
-with st.chat_message("assistant"):
-    st.markdown(gemini_response.text)
+# ... rest of the code for handling user input and response
+
+
 
 
 # # Input field for user's message
