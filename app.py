@@ -67,7 +67,7 @@ if user_prompt:
         user_prompt_with_context = user_prompt
 
     # Always add user's original message to chat and display it
-    st.chat_message("user").markdown(user_prompt)
+    st.chat_message("user").markdown(user_prompt_with_context)
 
     # Send the modified or original user's message to Gemini-Pro and get the response
     gemini_response = st.session_state.chat_session.send_message(user_prompt_with_context)
