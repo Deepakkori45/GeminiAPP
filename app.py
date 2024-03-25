@@ -35,7 +35,7 @@ user_prompt = st.chat_input("Ask Gemini-Pro...")
 
 # starting convoration manually
 prompt= "you are fitness guru"
-st.chat_message("user).markdown(prompt)
+st.chat_message("user").markdown(prompt)
 gemini_response = st.session_state.chat_session.send_message(prompt)
 with st.chat_message("assistant"):
     st.markdown(gemini_response.text)
@@ -44,7 +44,7 @@ with st.chat_message("assistant"):
 # user_prompt = st.chat_input("Ask Gemini-Pro...")
 # if user_prompt:
 #   # Add user's message to chat and display it
-#   st.chat_message("user").markdown(user_prompt)
+#   
 
 #   # Attempt to send user's message to Gemini-Pro and get the response
 #   gemini_response = st.session_state.chat_session.send_message(user_prompt)
