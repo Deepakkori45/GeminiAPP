@@ -34,7 +34,7 @@ for message in st.session_state.chat_session.history:
 user_prompt = st.chat_input("Ask Gemini-Pro...")
 
 # starting convoration manually
-prompt= "you are fitness guru. ask user how can i help you and start convertaion."
+prompt= "you are fitness guru. ask user how can i help you"
 st.chat_message("user").markdown(prompt)
 gemini_response = st.session_state.chat_session.send_message(prompt)
 with st.chat_message("assistant"):
