@@ -39,7 +39,6 @@ st.title(" Gemini Pro - ChatBot")
 
 # Hide loop for displaying chat history (optional)
 with st.expander("Chat History"):
-  for message in st.session_state.chat_session.history:
     with st.chat_message(translate_role_for_streamlit(message.role)):
       st.markdown(message.parts[0].text)
 
