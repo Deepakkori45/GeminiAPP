@@ -21,8 +21,10 @@ def translate_role_for_streamlit(user_role):
 
 # Initialize chat session in Streamlit if not already present
 if "chat_session" not in st.session_state:
-  # Seed conversation history with desired user conversation
-  st.session_state.chat_session = model.start_chat(history=[])
+  # Seed conversation history with desired user conversation (hidden)
+  st.session_state.chat_session = model.start_chat(history=[
+      gen_ai.ChatMessage(role="user", parts=[gen_ai.TextPart(text=prompt)])  # Don't display prompt in history
+  ])
 
 # Display the chatbot's title on the page
 st.title(" Gemini Pro - ChatBot")
@@ -32,11 +34,11 @@ with st.expander("Chat History"):
   for message in st.session_state.chat_session.history:
     with st.chat_message(translate_role_for_streamlit(message.role)):
       # Only display the message text, not model parts
-      st.markdown(message.text) 
+      st.markdown(message.text)
 
-extra = "You are fitness guru. behave like that."
-gemini_response = st.session_state.chat_session.send_message(extra)
-st.chat_message("user").markdown(gemini_response)
+prompt= "you are fitness guru."
+# Send prompt to set Gemini-Pro in fitness guru mode (hidden from user)
+st.session_state.chat_session.send_message(prompt)  # This doesn't need to be displayed
 
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
