@@ -58,6 +58,11 @@ for message in st.session_state.chat_session.history:
         with st.chat_message(translate_role_for_streamlit(message.role)):
             st.markdown(message.parts[0].text)
 
+input = "my name is deepak.ask me any question."
+gemini_response = st.session_state.chat_session.send_message(input)
+with st.chat_message("assistant"):
+    st.markdown(gemini_response.text)
+
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
 
@@ -68,6 +73,7 @@ if user_prompt:
         user_prompt_with_context = predefined_prompt + user_prompt
         # Mark the first message as sent in the session state
         st.session_state.first_message_sent = True
+        
     else:
         # For subsequent messages, just use the user's input for model processing
         user_prompt_with_context = user_prompt
