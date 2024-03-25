@@ -57,11 +57,10 @@ Start with asking how can i help you:"""
 #     else:
 #         with st.chat_message(translate_role_for_streamlit(message.role)):
 #             st.markdown(message.parts[0].text)
-
+count = 0
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
 # Display the chat history
-count = 0
 for message in st.session_state.chat_session.history:
     if count == 0:
         st.markdown(user_prompt)
