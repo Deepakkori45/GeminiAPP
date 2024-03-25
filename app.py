@@ -1,57 +1,50 @@
-# Import the necessary libraries
-from openai import OpenAI
 import streamlit as st
+import google.generativeai as gen_ai
+from google.generativeai.types.generation_types import BlockedPromptException, StopCandidateException
 
-# Set the title of the Streamlit web application
-st.title("ChatGPT-like clone")
+# Configure Streamlit page settings
+st.set_page_config(page_title="Chat with Gemini-Pro!", page_icon=":brain:", layout="centered")
 
-# Initialize the OpenAI client with the API key stored in Streamlit secrets
-# This requires having an `OPENAI_API_KEY` set up in your Streamlit secrets configuration
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+# Your Google API key
+GOOGLE_API_KEY = "AIzaSyC5jVGT9OHx4soEsliU60ByZsieobJPRms"  # Replace this with your real API key
 
-# Check if the model name is not already stored in session_state, then initialize it
-# This sets the default model to use for generating responses
-if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-3.5-turbo"
+# Set up Google Gemini-Pro AI model
+gen_ai.configure(api_key=GOOGLE_API_KEY)
+model = gen_ai.GenerativeModel('gemini-pro')
 
-# Check if the messages list is not already stored in session_state, then initialize it
-# This will store the conversation history
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+# Function to translate roles between Gemini-Pro and Streamlit terminology
+def translate_role_for_streamlit(user_role):
+    if user_role == "model":
+        return "assistant"
+    else:
+        return user_role
 
-# Loop through the stored messages and display them in the UI
-# This reconstructs the chat history on the page
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+# Initialize chat session in Streamlit if not already present
+if "chat_session" not in st.session_state:
+    st.session_state.chat_session = model.start_chat(history=[])
 
-# Create an input box for the user to type their message
-# `st.chat_input` creates a styled chat input box
-if prompt := st.chat_input("What is up?"):
-    # Append the user's message to the session_state messages list
-    st.session_state.messages.append({"role": "user", "content": prompt})
+# Display the chatbot's title on the page
+st.title("🤖 Gemini Pro - ChatBot")
 
-    # Display the user's message using the chat message container
-    with st.chat_message("user"):
-        st.markdown(prompt)
+# Display the chat history
+for message in st.session_state.chat_session.history:
+    with st.chat_message(translate_role_for_streamlit(message.role)):
+        st.markdown(message.parts[0].text)
 
-    # Generate a response from the OpenAI API
-    # The API call includes specifying the model and passing the current conversation history
-    # The 'stream=True' argument allows for streaming the API response
-    with st.chat_message("assistant"):
-        stream = client.chat.completions.create(
-            model=st.session_state["openai_model"],
-            messages=[
-                {"role": m["role"], "content": m["content"]}
-                for m in st.session_state.messages
-            ],
-            stream=True,
-        ) 
-        # Write the API's stream response to the chat
-        response = st.write_stream(stream)
+# Input field for user's message
+user_prompt = st.chat_input("Ask Gemini-Pro...")
+if user_prompt:
+    try:
+        # Add user's message to chat and display it
+        st.chat_message("user").markdown(user_prompt)
 
-    # Append the assistant's response to the session_state messages list
-    st.session_state.messages.append({"role": "assistant", "content": response})
+        # Attempt to send user's message to Gemini-Pro and get the response
+        gemini_response = st.session_state.chat_session.send_message(user_prompt)
 
-# The last part (starting from "# Display assistant response in chat message container") seems to be a repetition
-# of the assistant response generation code block above. It likely doesn't need to be repeated and can be removed.
+        # Display Gemini-Pro's response
+        with st.chat_message("assistant"):
+            st.markdown(gemini_response.text)
+    except Exception as e:
+        # Handle any exception by logging and asking the user to try again
+        # st.exception("An error occurred: {}".format(e))
+        st.warning("Please try asking your question again.")
