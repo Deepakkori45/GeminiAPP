@@ -49,7 +49,8 @@ This investigative procedure will serve as a foundational tool, generating a nua
 Start with asking how can i help you:"""
 
 # Display the chat history
-for message in st.session_state.chat_session.history[1:]:
+for message in st.session_state.chat_session.history:
+    
     with st.chat_message(translate_role_for_streamlit(message.role)):
         st.markdown(message.parts[0].text)
 
@@ -67,7 +68,7 @@ if user_prompt:
         user_prompt_with_context = user_prompt
 
     # Always add user's original message to chat and display it
-    st.chat_message("user").markdown(user_prompt_with_context)
+    st.chat_message("user").markdown(user_prompt)
 
     # Send the modified or original user's message to Gemini-Pro and get the response
     gemini_response = st.session_state.chat_session.send_message(user_prompt_with_context)
