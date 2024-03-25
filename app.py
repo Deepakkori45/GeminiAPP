@@ -45,19 +45,16 @@ if user_prompt:
     if "first_message_sent" not in st.session_state:
         # Prepend the predefined prompt to the user's first message for model processing
         user_prompt_with_context = predefined_prompt + user_prompt
-        # Always add user's original message to chat and display it
-        st.chat_message("user").markdown(user_prompt) 
         
         # Mark the first message as sent in the session state
         st.session_state.first_message_sent = True
     else:
         # For subsequent messages, just use the user's input for model processing
         user_prompt_with_context = user_prompt
-        # Always add user's original message to chat and display it
-        st.chat_message("user").markdown(user_prompt) 
+
 
     # Always add user's original message to chat and display it
-    # st.chat_message("user").markdown(user_prompt) 
+    st.chat_message("user").markdown(user_prompt) 
 
     # Send the modified or original user's message to Gemini-Pro and get the response
     gemini_response = st.session_state.chat_session.send_message(user_prompt_with_context)
