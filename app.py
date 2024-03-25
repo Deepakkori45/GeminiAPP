@@ -14,37 +14,42 @@ model = gen_ai.GenerativeModel('gemini-pro')
 
 # Function to translate roles between Gemini-Pro and Streamlit terminology
 def translate_role_for_streamlit(user_role):
-    if user_role == "model":
-        return "assistant"
-    else:
-        return user_role
+  if user_role == "model":
+    return "assistant"
+  else:
+    return user_role
 
 # Initialize chat session in Streamlit if not already present
 if "chat_session" not in st.session_state:
-    st.session_state.chat_session = model.start_chat(history=[])
+  # Seed conversation history with desired conversation
+  st.session_state.chat_session = model.start_chat(history=[
+      gen_ai.ChatMessage(role="user", parts=[gen_ai.TextPart(text="you have to behave like fitness guru. ask me me how can i help you.")]),
+      gen_ai.ChatMessage(role="model", parts=[gen_ai.TextPart(text="how can i help you as fitness guru.")])
+  ])
 
 # Display the chatbot's title on the page
-st.title("🤖 Gemini Pro - ChatBot")
+st.title(" Gemini Pro - ChatBot")
 
-# Display the chat history
-for message in st.session_state.chat_session.history:
+# Hide loop for displaying chat history
+with st.expander("Chat History"):
+  for message in st.session_state.chat_session.history:
     with st.chat_message(translate_role_for_streamlit(message.role)):
-        st.markdown(message.parts[0].text)
+      st.markdown(message.parts[0].text)
 
 # Input field for user's message
 user_prompt = st.chat_input("Ask Gemini-Pro...")
 if user_prompt:
-    try:
-        # Add user's message to chat and display it
-        st.chat_message("user").markdown(user_prompt)
+  try:
+    # Add user's message to chat and display it
+    st.chat_message("user").markdown(user_prompt)
 
-        # Attempt to send user's message to Gemini-Pro and get the response
-        gemini_response = st.session_state.chat_session.send_message(user_prompt)
+    # Attempt to send user's message to Gemini-Pro and get the response
+    gemini_response = st.session_state.chat_session.send_message(user_prompt)
 
-        # Display Gemini-Pro's response
-        with st.chat_message("assistant"):
-            st.markdown(gemini_response.text)
-    except Exception as e:
-        # Handle any exception by logging and asking the user to try again
-        # st.exception("An error occurred: {}".format(e))
-        st.warning("Please try asking your question again.")
+    # Display Gemini-Pro's response
+    with st.chat_message("assistant"):
+      st.markdown(gemini_response.text)
+  except Exception as e:
+    # Handle any exception by logging and asking the user to try again
+    # st.exception("An error occurred: {}".format(e))
+    st.warning("Please try asking your question again.")
